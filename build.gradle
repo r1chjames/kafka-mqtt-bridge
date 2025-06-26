@@ -1,0 +1,82 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url = "https://plugins.gradle.org/m2/" }
+        maven { url = "https://packages.confluent.io/maven/" }
+        gradlePluginPortal()
+
+    }
+    dependencies {
+        classpath "org.jfrog.buildinfo:build-info-extractor-gradle:latest.release"
+        classpath "com.gradleup.shadow:shadow-gradle-plugin:8.3.6"
+    }
+}
+
+plugins {
+    id("io.freefair.lombok") version "8.12.1"
+    id("com.gradleup.shadow") version "8.3.6"
+    id("checkstyle")
+    id("application")
+}
+
+application {
+    mainClass = 'com.r1chjames.Bridge'
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: "eclipse"
+apply plugin: "com.gradleup.shadow"
+
+allprojects {
+    tasks.withType(JavaCompile) {
+        sourceCompatibility = '21'
+        targetCompatibility = '21'
+    }
+}
+
+checkstyle {
+    configFile = file('config/checkstyle/checkstyle.xml')
+}
+
+checkstyleMain {
+    source = 'src/main/java'
+}
+
+checkstyleTest {
+    source = 'src/test/java'
+}
+
+wrapper {
+    gradleVersion = '8.14.2'
+}
+
+tasks.named('test', Test) {
+    useJUnitPlatform()
+
+    maxHeapSize = '1G'
+
+    testLogging {
+        events "passed"
+    }
+}
+
+group = "com.r1chjames"
+version = "0.0.1-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+    maven { url = "https://packages.confluent.io/maven/" }
+}
+
+dependencies {
+    testImplementation(platform("org.junit:junit-bom:5.13.1"),
+            "org.junit.jupiter:junit-jupiter",
+            "org.assertj:assertj-core:4.0.0-M1",
+            "org.mockito:mockito-core:5.18.0",
+            "org.mockito:mockito-junit-jupiter:5.18.0",
+            "com.salesforce.kafka.test:kafka-junit5:3.2.5",
+            "org.awaitility:awaitility:4.3.0")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+}
