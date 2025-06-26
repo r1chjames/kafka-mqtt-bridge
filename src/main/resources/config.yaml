@@ -1,0 +1,16 @@
+app {
+  input = "mqtt"
+  output = "kafka"
+}
+
+mqtt {
+  broker = "localhost:1883"
+  topic = "example"
+  username = "user"
+  password = "password"
+}
+
+kafka {  
+  broker = "localhost:9002"
+  topic = "example"
+}
