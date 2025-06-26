@@ -1,9 +1,10 @@
 package kafkamqttbridge;
 
+import java.net.ConnectException;
 import java.util.function.Consumer;
 
 public interface AppConsumer {
-    AppConsumer connect();
+    AppConsumer connect() throws ConnectException;
 
-    void subscribe(final Consumer<String> messageConsumer);
+    void subscribe(Consumer<String> messageConsumer);
 }

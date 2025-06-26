@@ -5,25 +5,23 @@ import kafkamqttbridge.AppProducer;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.net.ConnectException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Supplier;
 
 import static com.hivemq.client.mqtt.datatypes.MqttQos.EXACTLY_ONCE;
 import static kafkamqttbridge.AppConfigConstants.*;
 
 @Slf4j
 @AllArgsConstructor
-public class MqttProducer extends MqttUtils implements AppProducer {
+public final class MqttProducer extends MqttUtils implements AppProducer {
 
     private AppConfig config;
 
     public MqttProducer connect() {
-        getMqttClient()
+        getMqttClient(config)
             .connectWith()
             .simpleAuth()
-            .username(config.get(MQTT_USERNAME))
-            .password(config.get(MQTT_PASSWORD).getBytes())
+            .username(config.getString(MQTT_USERNAME))
+            .password(config.getString(MQTT_PASSWORD).getBytes())
             .applySimpleAuth()
             .send()
             .whenComplete((connAck, throwable) -> {
@@ -36,9 +34,9 @@ public class MqttProducer extends MqttUtils implements AppProducer {
     }
 
     public boolean publish(final String payload) {
-        var topic = config.get(MQTT_TOPIC);
+        var topic = config.getString(MQTT_TOPIC);
         final AtomicBoolean success = new AtomicBoolean(false);
-        getMqttClient()
+        getMqttClient(config)
             .publishWith()
             .topic(topic)
             .payload(payload.getBytes())
@@ -52,5 +50,9 @@ public class MqttProducer extends MqttUtils implements AppProducer {
                 }
             });
         return success.get();
+    }
+
+    @Override
+    public void close() {
     }
 }

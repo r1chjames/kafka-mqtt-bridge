@@ -1,11 +1,11 @@
 package kafkamqttbridge;
 import com.typesafe.config.*;
 
-public class AppConfig {
-    private final Config config;
+public final class AppConfig {
+    private final Config parsedConfig;
 
-    public AppConfig(Config config) {
-        this.config = config;
+    public AppConfig(final Config config) {
+        this.parsedConfig = config;
         config.checkValid(ConfigFactory.defaultReference());
     }
 
@@ -13,7 +13,11 @@ public class AppConfig {
         this(ConfigFactory.load());
     }
 
-    public String get(final String path) {
-        return config.getString(path);
+    public String getString(final String path) {
+        return parsedConfig.getString(path);
+    }
+
+    public int getInt(final String path) {
+        return parsedConfig.getInt(path);
     }
 }

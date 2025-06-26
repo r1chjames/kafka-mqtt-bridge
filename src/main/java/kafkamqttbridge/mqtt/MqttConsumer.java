@@ -5,23 +5,24 @@ import kafkamqttbridge.AppConsumer;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.net.ConnectException;
 import java.util.function.Consumer;
 
 import static kafkamqttbridge.AppConfigConstants.*;
 
 @Slf4j
 @AllArgsConstructor
-public class MqttConsumer extends MqttUtils implements AppConsumer {
+public final class MqttConsumer extends MqttUtils implements AppConsumer {
 
     private AppConfig config;
 
     @Override
-    public MqttConsumer connect() {
-        getMqttClient()
+    public MqttConsumer connect() throws ConnectException {
+        getMqttClient(config)
             .connectWith()
             .simpleAuth()
-            .username(config.get(MQTT_USERNAME))
-            .password(config.get(MQTT_PASSWORD).getBytes())
+            .username(config.getString(MQTT_USERNAME))
+            .password(config.getString(MQTT_PASSWORD).getBytes())
             .applySimpleAuth()
             .send()
             .whenComplete((connAck, throwable) -> {
@@ -34,8 +35,8 @@ public class MqttConsumer extends MqttUtils implements AppConsumer {
 
     @Override
     public void subscribe(final Consumer<String> messageConsumer) {
-        var topic = config.get(MQTT_TOPIC);
-        getMqttClient()
+        var topic = config.getString(MQTT_TOPIC);
+        getMqttClient(config)
             .subscribeWith()
             .topicFilter(topic)
             .callback(payload -> messageConsumer.accept(payload.getPayload().toString()))

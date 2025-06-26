@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @AllArgsConstructor
-public class KafkaProducer implements AppProducer {
+public final class KafkaProducer implements AppProducer {
 
     private AppConfig config;
 
@@ -19,5 +19,9 @@ public class KafkaProducer implements AppProducer {
     @Override
     public boolean publish(final String payload) {
         return true;
+    }
+
+    @Override
+    public void close() {
     }
 }

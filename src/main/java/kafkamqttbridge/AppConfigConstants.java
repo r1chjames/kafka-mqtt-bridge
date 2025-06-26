@@ -11,6 +11,7 @@ public class AppConfigConstants {
 
     public static final String MQTT_PREFIX = "mqtt";
     public static final String MQTT_BROKER = MQTT_PREFIX + DELIMITER + "broker";
+    public static final String MQTT_PORT = MQTT_PREFIX + DELIMITER + "port";
     public static final String MQTT_TOPIC = MQTT_PREFIX + DELIMITER + "topic";
     public static final String MQTT_USERNAME = MQTT_PREFIX + DELIMITER + "username";
     public static final String MQTT_PASSWORD = MQTT_PREFIX + DELIMITER + "password";
@@ -21,5 +22,16 @@ public class AppConfigConstants {
 }
 
 enum InputOutput {
-    MQTT, KAFKA
+    MQTT("mqtt"),
+    KAFKA("kafka");
+
+    private final String value;
+
+    InputOutput(final String val) {
+        this.value = val;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }
